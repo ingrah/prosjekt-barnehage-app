@@ -11,3 +11,4 @@ ukeplan
 huskeliste(med varsel) 
 bilder? 
 
+prioritere en liste med features 
