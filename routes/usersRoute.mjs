@@ -2,7 +2,7 @@ import express from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
-
+import { requestPathLogger } from "../middleware/middlewareTest";
 
 const USER_API = express.Router();
 USER_API.use(express.json()); // This makes it so that express parses all incoming payloads as JSON for this route.
@@ -24,7 +24,7 @@ USER_API.get('/:id', (req, res, next) => {
     // Return user object
 })
 
-USER_API.post('/', async (req, res, next) => {
+USER_API.post('/', requestPathLogger, async (req, res, next) => {
 
     // This is using javascript object destructuring.
     // Recomend reading up https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#syntax
