@@ -1,158 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My App</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Google Maps API script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places" defer></script>
+
+    <!-- Flatpickr library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
+
 <body>
 
-<div id="login-container">
-    <h2>Login</h2>
-    <form id="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
-        <button type="button" onclick="login()">Login</button>
-    </form>
-</div>
+    <div id="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button type="button" onclick="login()">Login</button>
+        </form>
+    </div>
 
-<div id="location-container" style="display:none;">
-    <h2>Location</h2>
-    <button onclick="getLocation()">Get Location</button>
-    <p id="location"></p>
-</div>
+    <div id="location-container" style="display:none;">
+        <h2>Location</h2>
+        <button onclick="getLocation()">Get Location</button>
+        <p id="location"></p>
+        <div id="map" style="height: 300px;"></div>
 
-<script src="app.js"></script>
+        <!-- Personal home button -->
+        <button onclick="goHome()">Home</button>
 
+        <!-- Messaging button -->
+        <button onclick="openMessaging()">Messaging</button>
+
+        <!-- Report Absence button with date picker -->
+        <button onclick="reportAbsence()">Meld Fravær</button>
+        <input type="text" id="absenceDate" placeholder="Select Date" readonly>
+
+        <!-- Timetable section -->
+        <h2>Timetable</h2>
+        <div id="timetable" style="display: none;">
+            <!-- Add your timetable content here -->
+            <p>Monday: 8:00 AM - 4:00 PM</p>
+            <p>Tuesday: 8:00 AM - 4:00 PM</p>
+            <p>Wednesday: 8:00 AM - 4:00 PM</p>
+            <p>Thursday: 8:00 AM - 4:00 PM</p>
+            <p>Friday: 8:00 AM - 4:00 PM</p>
+            <!-- Add more days and times as needed -->
+        </div>
+        <button onclick="toggleTimetable()">Show/Hide Timetable</button>
+    </div>
+
+    <script src="app.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ec1515;
+        }
+
+        #login-container,
+        #location-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+
+    <script>
+        let isLoggedIn = false;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Implement your authentication logic here (e.g., send a request to the backend)
+
+            // For simplicity, let's assume login is successful
+            isLoggedIn = true;
+
+            // Show location container after login
+            if (isLoggedIn) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('location-container').style.display = 'block';
+            }
+        }
+
+        let map;
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                document.getElementById('location').innerText = 'Geolocation is not supported by this browser.';
+            }
+        }
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const locationText = `Latitude: ${latitude}, Longitude: ${longitude}`;
+            document.getElementById('location').innerText = locationText;
+
+            // Create a map and display it in the #location-container
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: latitude, lng: longitude },
+                zoom: 15,
+            });
+
+            // Add a marker for the user's location
+            new google.maps.Marker({
+                position: { lat: latitude, lng: longitude },
+                map: map,
+                title: 'Your Location',
+            });
+
+            // Show the #location-container after getting the location
+            document.getElementById('location-container').style.display = 'block';
+        }
+
+        function goHome() {
+            // Implement logic to navigate to the home page
+            // For simplicity, let's reload the current page
+            location.reload();
+        }
+
+        function openMessaging() {
+            // Implement logic to open messaging feature
+            // This is a placeholder, replace it with your actual messaging code
+            alert('Opening Messaging...');
+        }
+
+        function reportAbsence() {
+            // Implement logic to handle reporting absence
+            // This is a placeholder, replace it with your actual code
+            alert('Reporting Absence...');
+        }
+
+        function toggleTimetable() {
+            const timetable = document.getElementById('timetable');
+            timetable.style.display = timetable.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Initialize flatpickr for the absence date input
+        flatpickr("#absenceDate", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+        });
+    </script>
 
 </body>
-<style>
-    body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
-
-#login-container,
-#location-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 16px;
-}
-
-button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#error-message {
-    color: red;
-    margin-top: 10px;
-}
-
-</style>
-<script>
-
-
-let isLoggedIn = false;
-
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    // Implement your authentication logic here (e.g., send a request to the backend)
-
-    // For simplicity, let's assume login is successful
-    isLoggedIn = true;
-
-    // Show location container after login
-    if (isLoggedIn) {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('location-container').style.display = 'block';
-    }
-}
-
-function getLocation() {
-    // Implement geolocation logic here
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        document.getElementById('location').innerText = 'Geolocation is not supported by this browser.';
-    }
-}
-
-function showPosition(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-
-    // Implement logic to send location data to the backend
-    // For simplicity, let's just display it on the page
-    document.getElementById('location').innerText = `Latitude: ${latitude}, Longitude: ${longitude}`;
-}
-
-</script>
-<script>
-    const express = require('express');
-const app = express();
-const port = 3000;
-
-app.use(express.json());
-
-// Dummy users for simplicity (in a real app, use a database)
-const users = [
-    { username: 'user1', password: 'password1' },
-    { username: 'user2', password: 'password2' },
-];
-
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    // Check if the provided username and password match any user
-    const user = users.find(u => u.username === username && u.password === password);
-
-    if (user) {
-        res.status(200).json({ message: 'Login successful' });
-    } else {
-        res.status(401).json({ message: 'Invalid credentials' });
-    }
-});
-
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
-
-</script>
-
-<Script>
-    node server.js
-
-</Script>
 
 </html>
+
+
+
+
