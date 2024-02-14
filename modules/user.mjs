@@ -1,4 +1,4 @@
-import DBManager from "./storageManager.mjs";
+import DBManager from "./dbManager/storageManager.mjs";
 
 /*  
 // If you dont want to use class, this is one alternative

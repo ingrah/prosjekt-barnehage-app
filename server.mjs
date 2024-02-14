@@ -31,7 +31,7 @@ server.get("/", (req, res, next) => {
 
 // Start the server 
 server.listen(server.get('port'), function () {
-    console.log('server running', server.get('port'));git 
+    console.log('server running', server.get('port')); 
 });
 
 

@@ -2,7 +2,7 @@ import express from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
-import { requestPathLogger } from "../middleware/middlewareTest";
+import { requestPathLogger } from "../middleware/middlewareTest.mjs";
 
 const USER_API = express.Router();
 USER_API.use(express.json()); // This makes it so that express parses all incoming payloads as JSON for this route.
@@ -69,4 +69,3 @@ USER_API.delete('/:id', (req, res) => {
 });
 
 export default USER_API
-s

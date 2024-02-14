@@ -1,3 +1,0 @@
-DB_CONNECTIONSTRING=postgresql://user:password@host/database:port
-
-DB_SSL=false
