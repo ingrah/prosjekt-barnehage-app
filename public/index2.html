@@ -58,6 +58,7 @@
             <!-- Add more days and times as needed -->
         </div>
         <button onclick="toggleTimetable()">Show/Hide Timetable</button>
+      
     </div>
 
     <script src="app.mjs"></script> 
@@ -193,6 +194,39 @@
             dateFormat: "Y-m-d",
         });
     </script>
+
+    <!-- Add this HTML code within the #location-container -->
+  <div id="messaging-container" style="display:none;">
+    <h2>Messaging</h2>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type your message">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+
+
+<script>
+    function openMessaging() {
+        document.getElementById('messaging-container').style.display = 'block';
+        document.getElementById('location-container').style.display = 'none';
+        document.getElementById('timetable').style.display = 'none';
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+
+        // Implement logic to send the message (e.g., through WebSocket or AJAX)
+        // For simplicity, let's just display the message for now
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML += `<p>${message}</p>`;
+
+        // Clear the message input
+        messageInput.value = '';
+    }
+    
+</script>
+
 
 </body>
 
