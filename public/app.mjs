@@ -1,4 +1,4 @@
-const app = require("express")()
+/*const app = require("express")()
 const PORT = 3000
 app.get('/',(req,res)=>{
 res.send("Hello World")
@@ -20,4 +20,4 @@ function requestPathLogger(req,res) {
         app.get("/hello",requestPathLogger,(req,res)=>{
         res.send("Hello");
         });
-        
+  */      

@@ -94,7 +94,7 @@ class DBManager {
 
 }
 
-
+//connectionString = process.env["DB_CONNECTIONSTRING_" + process.env.ENVIORMENT.toUpperCase()];
 
 
 
