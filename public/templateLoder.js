@@ -1,6 +1,21 @@
 
-function loadTemplate(a TemplateID, aDestElement, aEmptyElement = false){
+function loadTemplate(aTemplateID, aDestElement, aEmptyElement = false){
    
     const tI = document.getElementById(aTemplateID); 
-    if (TouchList.cotent)
+    if (TouchList.cotent){
+        const clone = tI.contentEditable.clone();
+        if (aEmptyElement){
+            aEmptyConteinerElement(aDestElement);
+
+        }
+        aDestElement.appendChild(clone);
+
+    }else{
+        console ("your browser dose not support templates");
+    }
+}
+
+function aEmptyConteinerElement(aElement){
+    let child = aElement.fisteChild();
+    while(child){
 }
