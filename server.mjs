@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express' // Express is installed using npm
 import USER_API from './routes/usersRoute.mjs'; // This is where we have defined the API for working with users.
+import DBManager from "./modules/storage.mjs"; 
 
 
 import SuperLogger from './modules/SuperLogger.mjs';
@@ -27,7 +28,23 @@ server.get("/", (req, res, next) => {
     res.status(200).send(JSON.stringify({ msg: "These are not the droids...." })).end();
 });
 
+server.post("/login",async (req, res, next) =>{
 
+const credential = req.headers.authorization.split(" ")[1];
+
+
+const [username,password]= Buffer.from(credential, "base64").toString("utf8").split(":");
+const user= await DBManager.getUser(username);
+if (user[0].password===password){
+    console.log("sukkses");
+    res.status(200).end();
+}
+else 
+{
+    console.log("feilpassor");
+    res.status(401).end();
+}
+});
 
 // Start the server 
 server.listen(server.get('port'), function () {

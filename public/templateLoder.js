@@ -18,4 +18,7 @@ function loadTemplate(aTemplateID, aDestElement, aEmptyElement = false){
 function aEmptyConteinerElement(aElement){
     let child = aElement.fisteChild();
     while(child){
+        aElement.removeChild(child);
+        child =aElement.fisteChild();
+    }
 }

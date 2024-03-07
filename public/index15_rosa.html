@@ -9,8 +9,6 @@
   
 
 
-    <!-- Google Maps API script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places" defer></script>
 
     <!-- Flatpickr library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -24,7 +22,7 @@
         <form id="login-form">
             <label for="username">Username:</label>
             <input type="text" id="username" required>
-            <button id="createUserButton">Create User</button>
+            
             <label for="password">Password:</label>
             <input type="password" id="password" required>
             <button type="button" onclick="login()">Login</button>
@@ -32,10 +30,7 @@
     </div>
 
     <div id="location-container" style="display:none;">
-        <h2>Location</h2>
-        <button onclick="getLocation()">Get Location</button>
-        <p id="location"></p>
-        <div id="map" style="height: 300px;"></div>
+        
 
         <!-- Personal home button -->
         <button onclick="goHome()">Home</button>
@@ -63,6 +58,8 @@
     </div>
 
     <script src="app.mjs"></script> 
+    
+    
 
     <style>
         body {
@@ -112,59 +109,65 @@
             margin-top: 10px;
         }
     </style>
+    
 
     <script>
         let isLoggedIn = false;
 
-        function login() {
+        async function login() {
+            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            
 
             // Implement your authentication logic here (e.g., send a request to the backend)
+         
+            const url = "/login";
 
+      let logindata = await fetch(url, {
+        method: "post",
+        headers: {
+          authorization: createBasicAuthString(username,password), "Content-Type": "application/json",
+        },
+      });
+      console.log(logindata);
+      if (logindata.status === 200) {
+        /*let logininfo = await logindata.json();
+        console.log(logininfo);
+        localStorage.setItem("token", logininfo.logindata.token);
+        msg.innerHTML = "Logged in";*/
+     console.log("sukksess");
+        }
+        else {
+            console.log("feilpassord");
+        }
+        
             // For simplicity, let's assume login is successful
             isLoggedIn = true;
 
-            // Show location container after login
-            if (isLoggedIn) {
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('location-container').style.display = 'block';
-            }
+           
+        }
+        function createBasicAuthString(username, password) {
+      let combinedStr = username + ":" + password;
+      let b64Str = btoa(combinedStr);
+      return "basic " + b64Str; //return the basic authentication string
+    
+                }
+
+        async function postTo(url, data) {
+            const header = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            };
+
+            const respon = await fetch(url, header);
+            return respon;
         }
 
-        let map;
 
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
-            } else {
-                document.getElementById('location').innerText = 'Geolocation is not supported by this browser.';
-            }
-        }
-
-        function showPosition(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            const locationText = `Latitude: ${latitude}, Longitude: ${longitude}`;
-            document.getElementById('location').innerText = locationText;
-
-            // Create a map and display it in the #location-container
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: latitude, lng: longitude },
-                zoom: 15,
-            });
-
-            // Add a marker for the user's location
-            new google.maps.Marker({
-                position: { lat: latitude, lng: longitude },
-                map: map,
-                title: 'Your Location',
-            });
-
-            // Show the #location-container after getting the location
-            document.getElementById('location-container').style.display = 'block';
-        }
 
         function goHome() {
             // Implement logic to navigate to the home page
@@ -225,8 +228,15 @@
         // Clear the message input
         messageInput.value = '';
     }
+
+    
+
+
+
+    
     
 </script>
+
 
 
 
