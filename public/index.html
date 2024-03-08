@@ -15,11 +15,15 @@
         Email: <input type="email" id="email"><br />
         Password: <input type="password" id="password"><br />
         <button id="createUserButton">Create User</button>
+        <div id="msg">
+            
+        </div>
     </div>
 
     <script>
 
         const createUserButton = document.getElementById("createUserButton");
+        const msg = document.getElementById("msg");
 
         createUserButton.onclick = async function (e) {
 
@@ -28,6 +32,12 @@
             const password= document.getElementById("password").value;
             const user = { name, email, password };
             const respon = await postTo("/user", user);
+            if (respon.status===200){
+                msg.innerHTML="bruker opprettet";
+                document.getElementById("name").value="";
+                document.getElementById("email").value="";
+                document.getElementById("password").value="";
+            }
 
         }
 
