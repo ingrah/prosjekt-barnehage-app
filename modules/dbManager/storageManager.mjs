@@ -5,7 +5,11 @@ import SuperLogger from "../SuperLogger.mjs";
 if (process.env.DB_CONNECTIONSTRING == undefined) {
     throw ("You forgot the db connection string");
 }
-
+let connectionString = process.env.DB_CONNECTIONSTRING_LOCAL;
+if (process.env.ENVIORMENT != "local") {
+    connectionString = process.env.DB_CONNECTIONSTRING_PROD;
+}
+console.log(connectionString);
 /// TODO: is the structure / design of the DBManager as good as it could be?
 
 class DBManager {
@@ -15,7 +19,7 @@ class DBManager {
     constructor(connectionString) {
         this.#credentials = {
             connectionString,
-            ssl: (process.env.DB_SSL === "true") ? process.env.DB_SSL : false
+            ssl: (process.env.DB_SSL === "true") ? true : false
         };
 
     }
@@ -66,13 +70,13 @@ class DBManager {
     }
 
     async createUser(user) {
-
+      
         const client = new pg.Client(this.#credentials);
-
+        console.log(user)
         try {
             await client.connect();
-            const output = await client.query('INSERT INTO "public"."Users"("name", "email", "password") VALUES($1::Text, $2::Text, $3::Text) RETURNING id;', [user.name, user.email, user.pswHash]);
-
+            const output = await client.query('INSERT INTO "public"."Users"("id","name", "email", "password") VALUES(DEFAULT,$1::Text, $2::Text, $3::Text) RETURNING id;', [user.name, user.email, user.pswHash]);
+           // console.log(output);
             // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
             // Of special intrest is the rows and rowCount properties of this object.
 
@@ -91,7 +95,29 @@ class DBManager {
         return user;
 
     }
+    async getUser(username){
+        const client = new pg.Client(this.#credentials);
 
+        try {
+            await client.connect();
+            const output = await client.query('SELECT * from "public"."Users" where email=$1',[username]);
+          
+            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
+            // Of special intrest is the rows and rowCount properties of this object.
+
+            return output.rows; 
+
+        } catch (error) {
+            console.error(error);
+            return null;
+            //TODO : Error handling?? Remember that this is a module seperate from your server 
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+        
+
+    }
 }
 
 //connectionString = process.env["DB_CONNECTIONSTRING_" + process.env.ENVIORMENT.toUpperCase()];
@@ -101,6 +127,6 @@ class DBManager {
 
 
 
-export default new DBManager(process.env.DB_CONNECTIONSTRING);
+export default new DBManager(connectionString);
 
 //

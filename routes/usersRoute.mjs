@@ -44,6 +44,7 @@ USER_API.post('/', async (req, res, next) => {
 
         if (!exists) {
             //TODO: What happens if this fails?
+            
             user = await user.save();
             res.status(HTTPCodes.SuccesfullRespons.Ok).json(JSON.stringify(user)).end();
         } else {
