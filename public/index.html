@@ -39,8 +39,10 @@
             targetElement.append(...element.childNodes);
             if (viewTemplate.id === "login") {
                 const loginbutton = document.getElementById("loginbutton");
-                loginbutton.onclick = async () => {
-                    console.log("hallo")
+                loginbutton.onclick = async (e) => {
+                    e.preventDefault();
+
+
                     await loginhome();
                 }
 
@@ -121,7 +123,7 @@
                 localStorage.setItem("token", logininfo.logindata.token);
                 msg.innerHTML = "Logged in";*/
                 console.log("sukksess");
-                //displayView(home, document.querySelector("main"));
+                displayView(home, document.querySelector("main"));
             }
             else {
                 console.log("feilpassord");

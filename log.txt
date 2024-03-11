@@ -340,3 +340,6 @@
 12:16:47 PM [33mPOST[39m /login
 12:16:47 PM [32mGET[39m /?
 12:16:47 PM [32mGET[39m /templates.html
+12:25:31 PM [32mGET[39m /?
+12:25:31 PM [32mGET[39m /templates.html
+12:25:38 PM [33mPOST[39m /login
