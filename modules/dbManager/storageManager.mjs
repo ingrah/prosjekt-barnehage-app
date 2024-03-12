@@ -118,6 +118,28 @@ class DBManager {
         
 
     }
+    async addmessage(userid,msg){
+        const client = new pg.Client(this.#credentials);
+        
+        try {
+            await client.connect();
+            const output = await client.query('INSERT INTO "public"."messenger"("id","date", "userid", "text") VALUES(DEFAULT,$1, $2, $3::Text) RETURNING id;', ["NOW()", userid,msg]);
+
+           
+
+           console.log(output)
+
+        } catch (error) {
+            console.error(error);
+            //TODO : Error handling?? Remember that this is a module seperate from your server 
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+        return userid;
+
+
+    }
 }
 
 //connectionString = process.env["DB_CONNECTIONSTRING_" + process.env.ENVIORMENT.toUpperCase()];

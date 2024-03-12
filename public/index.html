@@ -7,7 +7,7 @@
     <title>My app</title>
 </head>
 
-  <link rel="manifest" href="manifest.json" />
+  <!--<link rel="manifest" href="manifest.json" />-->
 <body>
 
 
@@ -18,21 +18,34 @@
     </main>
 
     <script type="module">
-        await insertTemplatesFrom("/templates.html") // Load templates from external file.
-
+       
+       await insertTemplatesFrom("/templates.html"); // Load templates from external file.
+            
         // This function loads templates from an external html file and adds them to the end of this document body.
         async function insertTemplatesFrom(source) {
+
             const templates = await fetch(source).then(d => d.text());
             document.body.insertAdjacentHTML("beforeend", templates);
+            
         }
         //her får vi tilgang til alle teplates.
         const createUser = document.getElementById("createUser");
         const login = document.getElementById("login");
         const home = document.getElementById("home");
+        const message = document.getElementById("message");
+        const type = document.getElementById("type");
+   
+        let token =sessionStorage.getItem("token");
+            console.log(token)
+            if(token){
+                displayView(home, document.querySelector("main")); 
+            }else{
+                displayView(login, document.querySelector("main"));
+            }
+            
 
-
-        // Display the first template 
-        displayView(login, document.querySelector("main"))
+       
+        
 
         // Clones a larger template and adds it to a existing element.
         function displayView(viewTemplate, targetElement) {
@@ -40,7 +53,7 @@
             const element = document.createElement("div");
             element.append(cloneTemplate(viewTemplate));
             targetElement.append(...element.childNodes);
-            if (viewTemplate.id === "login") {
+            if (viewTemplate.id ==="login") {
                 const loginbutton = document.getElementById("loginbutton");
                 loginbutton.onclick = async (e) => {
                     e.preventDefault();
@@ -55,6 +68,32 @@
             if (viewTemplate.id === "createUser") {
                 const createUserButton = document.getElementById("createUserButton");
                 createUserButton.onclick = addUser;
+            }
+            if(viewTemplate.id==="home"){
+                const Showmessaging = document.getElementById("Showmessaging");
+                Showmessaging.onclick = ()=>{
+                    displayView(message,document.querySelector("main"));
+                }
+            }
+            if (viewTemplate.id === "message") {
+                const skrivButton = document.getElementById("skrivButton");
+                skrivButton.onclick =  ()=>{
+                    displayView(type,document.querySelector("main"));
+                }
+            }
+            if (viewTemplate.id === "type") {
+                const beskjed = document.getElementById("beskjed");
+                const send = document.getElementById("send");
+                send.onclick = async ()=>{
+                    let userid=sessionStorage.getItem("token").split(".")[0];
+                    let msg=beskjed.value;
+                    let data={
+                        userid,
+                        msg
+                    }
+                   let res= await postTo("/user/addMessage",data);
+                   console.log(res)
+                }
             }
         }
         // Makes a clone of a template. 
@@ -91,6 +130,7 @@
         }
 
         async function postTo(url, data) {
+            console.log(data)
             const header = {
                 method: "POST",
                 headers: {
@@ -123,8 +163,10 @@
             if (logindata.status === 200) {
                 /*let logininfo = await logindata.json();
                 console.log(logininfo);
-                localStorage.setItem("token", logininfo.logindata.token);
+                sessionStorage.setItem("token", logininfo.logindata.token);
                 msg.innerHTML = "Logged in";*/
+                let data=await logindata.json();
+                sessionStorage.setItem("token",data.token);
                 console.log("sukksess");
                 displayView(home, document.querySelector("main"));
             }

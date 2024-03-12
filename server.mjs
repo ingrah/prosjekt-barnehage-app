@@ -37,7 +37,9 @@ const [username,password]= Buffer.from(credential, "base64").toString("utf8").sp
 const user= await DBManager.getUser(username);
 if (user[0].password===password){
     console.log("sukkses");
-    res.status(200).end();
+    console.log(user);
+    let token=user[0].id+"."+Date.now();
+    res.status(200).json({token}).end();
 }
 else 
 {
@@ -45,6 +47,8 @@ else
     res.status(401).end();
 }
 });
+
+
 
 // Start the server 
 server.listen(server.get('port'), function () {

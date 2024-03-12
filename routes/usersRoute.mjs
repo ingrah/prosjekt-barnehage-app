@@ -2,6 +2,7 @@ import express from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
+import DBManager from "../modules/dbManager/storageManager.mjs"; 
 //import { requestPathLogger } from "../middleware/middlewareTest.mjs";
 
 const USER_API = express.Router();
@@ -68,5 +69,9 @@ USER_API.delete('/:id', (req, res) => {
     const user = new User(); //TODO: Actual user
     user.delete();
 });
-
+USER_API.post("/addMessage",async(req, res, next)=> {
+     const {userid,msg}=req.body;
+     console.log(req.body)
+     DBManager.addmessage(userid,msg);
+ })
 export default USER_API
