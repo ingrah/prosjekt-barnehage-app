@@ -38,7 +38,9 @@ const user= await DBManager.getUser(username);
 if (user[0].password===password){
     console.log("sukkses");
     console.log(user);
-    let token=user[0].id+"."+Date.now();
+   let role=user[0].role ? user[0].role : "ingen";
+    
+    let token=user[0].id+"."+Date.now()+"."+role;
     res.status(200).json({token}).end();
 }
 else 
@@ -48,7 +50,17 @@ else
 }
 });
 
-
+server.delete("/deleteMessage/:id",async(req,res)=>{
+    
+    let id=req.params.id;
+    let respons=await DBManager.deletemessage(id);
+    if(respons){
+        res.status(200).end();
+    }
+    else{
+        res.status(500).end();
+    }
+})
 
 // Start the server 
 server.listen(server.get('port'), function () {

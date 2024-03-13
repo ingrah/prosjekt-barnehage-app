@@ -94,17 +94,5 @@ USER_API.get("/getMessages/:userid", async (req, res, next) => {
     }
 })
 
-USER_API.delete("/deleteMessage", async (req, res) => {
-    //const {id}=req.body;
-    console.log("hei")
 
-    let respons = await DBManager.deletemessage(id);
-
-    if (respons) {
-        res.status(200).end();
-    }
-    else {
-        res.status(500).end();
-    }
-})
 export default USER_API 
