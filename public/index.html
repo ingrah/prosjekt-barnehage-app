@@ -7,26 +7,27 @@
     <title>My app</title>
 </head>
 
-  <!--<link rel="manifest" href="manifest.json" />-->
+<!--<link rel="manifest" href="manifest.json" />-->
+
 <body>
 
 
 
-    
+
     <main>
 
     </main>
 
     <script type="module">
-       
-       await insertTemplatesFrom("/templates.html"); // Load templates from external file.
-            
+
+        await insertTemplatesFrom("/templates.html"); // Load templates from external file.
+
         // This function loads templates from an external html file and adds them to the end of this document body.
         async function insertTemplatesFrom(source) {
 
             const templates = await fetch(source).then(d => d.text());
             document.body.insertAdjacentHTML("beforeend", templates);
-            
+
         }
         //her får vi tilgang til alle teplates.
         const createUser = document.getElementById("createUser");
@@ -34,18 +35,18 @@
         const home = document.getElementById("home");
         const message = document.getElementById("message");
         const type = document.getElementById("type");
-   
-        let token =sessionStorage.getItem("token");
-            console.log(token)
-            if(token){
-                displayView(home, document.querySelector("main")); 
-            }else{
-                displayView(login, document.querySelector("main"));
-            }
-            
 
-       
-        
+        let token = sessionStorage.getItem("token");
+        console.log(token)
+        if (token) {
+            displayView(home, document.querySelector("main"));
+        } else {
+            displayView(login, document.querySelector("main"));
+        }
+
+
+
+
 
         // Clones a larger template and adds it to a existing element.
         function displayView(viewTemplate, targetElement) {
@@ -53,7 +54,7 @@
             const element = document.createElement("div");
             element.append(cloneTemplate(viewTemplate));
             targetElement.append(...element.childNodes);
-            if (viewTemplate.id ==="login") {
+            if (viewTemplate.id === "login") {
                 const loginbutton = document.getElementById("loginbutton");
                 loginbutton.onclick = async (e) => {
                     e.preventDefault();
@@ -69,30 +70,37 @@
                 const createUserButton = document.getElementById("createUserButton");
                 createUserButton.onclick = addUser;
             }
-            if(viewTemplate.id==="home"){
+            if (viewTemplate.id === "home") {
                 const Showmessaging = document.getElementById("Showmessaging");
-                Showmessaging.onclick = ()=>{
-                    displayView(message,document.querySelector("main"));
+                Showmessaging.onclick = () => {
+                    displayView(message, document.querySelector("main"));
                 }
             }
             if (viewTemplate.id === "message") {
                 const skrivButton = document.getElementById("skrivButton");
-                skrivButton.onclick =  ()=>{
-                    displayView(type,document.querySelector("main"));
+                skrivButton.onclick = () => {
+                    displayView(type, document.querySelector("main"));
+
                 }
+                dinemeldinger();
             }
             if (viewTemplate.id === "type") {
                 const beskjed = document.getElementById("beskjed");
                 const send = document.getElementById("send");
-                send.onclick = async ()=>{
-                    let userid=sessionStorage.getItem("token").split(".")[0];
-                    let msg=beskjed.value;
-                    let data={
+                send.onclick = async () => {
+                    let userid = sessionStorage.getItem("token").split(".")[0];
+                    let msg = beskjed.value;
+                    let data = {
                         userid,
-                        msg
+                        msg,
+                        motaker: 0
                     }
-                   let res= await postTo("/user/addMessage",data);
-                   console.log(res)
+                    let res = await postTo("/user/addMessage", data);
+
+                    if (res.status === 200) {
+                        displayView(message, document.querySelector("main"))
+                    }
+
                 }
             }
         }
@@ -106,7 +114,62 @@
 
         }
 
+        async function dinemeldinger() {
+            let userid = sessionStorage.getItem("token").split(".")[0];
+            let res = await fetch("/user/getMessages/" + userid, {
+                method: "get",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            if (res.status === 200) {
+                let meldinger = await res.json();
+                console.log(meldinger)
+                for (let melding of meldinger) {
+                    let div = document.createElement("div");
+                    div.classList.add("melding");
 
+                    let dato = document.createElement("div");
+                    dato.classList.add("dato")
+                    let dag = new Date(melding.date);
+                    dato.innerHTML = dag.toLocaleDateString();
+
+
+
+                    let text = document.createElement("div");
+                    text.innerHTML = melding.text;
+
+                    let slett = document.createElement("button");
+                    slett.innerHTML = "slett";
+
+                    div.appendChild(dato);
+                    div.appendChild(text);
+                    div.appendChild(slett);
+                    document.getElementById("innboks").appendChild(div);
+                    let id = melding.id;
+                    slett.onclick = async function () {
+                        const data = { id };
+
+                        const header = {
+                            method: "delete",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(data),
+                        };
+
+                        let res = await fetch("/user/deleteMessage", header);
+                        if (res.status === 200) {
+                            displayView(message, document.querySelector("main"));
+                        }
+                    }
+
+
+
+                }
+            }
+
+        }
 
 
         async function addUser(e) {
@@ -140,10 +203,11 @@
             };
 
             const respon = await fetch(url, header);
+
             return respon;
         }
         async function loginhome() {
-            console.log("hei");
+
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -165,8 +229,8 @@
                 console.log(logininfo);
                 sessionStorage.setItem("token", logininfo.logindata.token);
                 msg.innerHTML = "Logged in";*/
-                let data=await logindata.json();
-                sessionStorage.setItem("token",data.token);
+                let data = await logindata.json();
+                sessionStorage.setItem("token", data.token);
                 console.log("sukksess");
                 displayView(home, document.querySelector("main"));
             }
@@ -189,54 +253,66 @@
 
     </script>
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #ec1515;
-    }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ec1515;
+        }
 
-    #login-container,
-    #location-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        #login-container,
+        #location-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    label {
-        display: block;
-        margin-bottom: 8px;
-    }
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
 
-    input {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 16px;
-    }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+        }
 
-    button {
-        background-color: #007bff;
-        color: #ffffff;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 10px;
-    }
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
-    button:hover {
-        background-color: #0056b3;
-    }
+        button:hover {
+            background-color: #0056b3;
+        }
 
-    #error-message {
-        color: red;
-        margin-top: 10px;
-    }
-</style>
+        #error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .melding {
+            border: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .dato {
+
+            align-self: flex-end;
+        }
+    </style>
 
 
 </body>

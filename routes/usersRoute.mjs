@@ -2,7 +2,7 @@ import express from "express";
 import User from "../modules/user.mjs";
 import { HTTPCodes } from "../modules/httpConstants.mjs";
 import SuperLogger from "../modules/SuperLogger.mjs";
-import DBManager from "../modules/dbManager/storageManager.mjs"; 
+import DBManager from "../modules/dbManager/storageManager.mjs";
 //import { requestPathLogger } from "../middleware/middlewareTest.mjs";
 
 const USER_API = express.Router();
@@ -45,7 +45,7 @@ USER_API.post('/', async (req, res, next) => {
 
         if (!exists) {
             //TODO: What happens if this fails?
-            
+
             user = await user.save();
             res.status(HTTPCodes.SuccesfullRespons.Ok).json(JSON.stringify(user)).end();
         } else {
@@ -69,9 +69,42 @@ USER_API.delete('/:id', (req, res) => {
     const user = new User(); //TODO: Actual user
     user.delete();
 });
-USER_API.post("/addMessage",async(req, res, next)=> {
-     const {userid,msg}=req.body;
-     console.log(req.body)
-     DBManager.addmessage(userid,msg);
- })
-export default USER_API
+USER_API.post("/addMessage", async (req, res, next) => {
+    const { userid, msg, motaker } = req.body;
+
+    let id = DBManager.addmessage(userid, msg, motaker);
+    if (id) {
+        res.status(200).end();
+    }
+    else {
+        res.status(500).end();
+    }
+})
+USER_API.get("/getMessages/:userid", async (req, res, next) => {
+    const userid = req.params.userid;
+
+
+    let messages = await DBManager.getmessages(userid);
+    console.log(messages)
+    if (messages) {
+        res.status(200).json(messages).end();
+    }
+    else {
+        res.status(500).end();
+    }
+})
+
+USER_API.delete("/deleteMessage", async (req, res) => {
+    //const {id}=req.body;
+    console.log("hei")
+
+    let respons = await DBManager.deletemessage(id);
+
+    if (respons) {
+        res.status(200).end();
+    }
+    else {
+        res.status(500).end();
+    }
+})
+export default USER_API 

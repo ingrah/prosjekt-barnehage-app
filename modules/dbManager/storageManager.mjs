@@ -70,13 +70,13 @@ class DBManager {
     }
 
     async createUser(user) {
-      
+
         const client = new pg.Client(this.#credentials);
         console.log(user)
         try {
             await client.connect();
             const output = await client.query('INSERT INTO "public"."Users"("id","name", "email", "password") VALUES(DEFAULT,$1::Text, $2::Text, $3::Text) RETURNING id;', [user.name, user.email, user.pswHash]);
-           // console.log(output);
+            // console.log(output);
             // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
             // Of special intrest is the rows and rowCount properties of this object.
 
@@ -95,17 +95,17 @@ class DBManager {
         return user;
 
     }
-    async getUser(username){
+    async getUser(username) {
         const client = new pg.Client(this.#credentials);
 
         try {
             await client.connect();
-            const output = await client.query('SELECT * from "public"."Users" where email=$1',[username]);
-          
+            const output = await client.query('SELECT * from "public"."Users" where email=$1', [username]);
+
             // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
             // Of special intrest is the rows and rowCount properties of this object.
 
-            return output.rows; 
+            return output.rows;
 
         } catch (error) {
             console.error(error);
@@ -115,19 +115,19 @@ class DBManager {
             client.end(); // Always disconnect from the database.
         }
 
-        
+
 
     }
-    async addmessage(userid,msg){
+    async addmessage(userid, msg, motaker) {
         const client = new pg.Client(this.#credentials);
-        
+
         try {
             await client.connect();
-            const output = await client.query('INSERT INTO "public"."messenger"("id","date", "userid", "text") VALUES(DEFAULT,$1, $2, $3::Text) RETURNING id;', ["NOW()", userid,msg]);
+            const output = await client.query('INSERT INTO "public"."messenger"("id","date", "userid", "text","motaker") VALUES(DEFAULT,$1, $2, $3::Text,$4) RETURNING id;', ["NOW()", userid, msg, motaker]);
 
-           
 
-           console.log(output)
+
+
 
         } catch (error) {
             console.error(error);
@@ -140,6 +140,47 @@ class DBManager {
 
 
     }
+    async getmessages(userid) {
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            await client.connect();
+            const output = await client.query('SELECT * from "public"."messenger" where userid=$1', [userid]);
+
+
+
+            return output.rows;
+
+        } catch (error) {
+            console.error(error);
+            return null;
+
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+
+
+    }
+    async deletemessage(id) {
+
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            await client.connect();
+            const output = await client.query('Delete from "public"."messenger"  where id = $1;', [id]);
+            console.log(output)
+
+
+        } catch (error) {
+
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+        return id;
+    }
+
 }
 
 //connectionString = process.env["DB_CONNECTIONSTRING_" + process.env.ENVIORMENT.toUpperCase()];
