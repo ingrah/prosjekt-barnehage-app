@@ -9,10 +9,10 @@ self.addEventListener("install", (event) => {
         addResourcesToCache([
             "/",
             "/index.html",
-            "/css/app.css",
-            "/source/app.mjs",
-            "/images",
-            "/data/data.json",
+        
+            "/app.mjs",
+            
+            
         ]),
     );
 });
