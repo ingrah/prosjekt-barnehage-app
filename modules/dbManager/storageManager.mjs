@@ -145,7 +145,7 @@ class DBManager {
 
         try {
             await client.connect();
-            const output = await client.query('SELECT * from "public"."messenger" where userid=$1', [userid]);
+            const output = await client.query('SELECT * from "public"."messenger" where userid=$1 or motaker=$2', [userid,userid]);
 
 
 
@@ -180,7 +180,47 @@ class DBManager {
 
         return id;
     }
+    async updatemessage(id,msg) {
 
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            await client.connect();
+            const output = await client.query('Update "public"."messenger" set "text" = $1  where id = $2;', [msg,id]);
+
+        
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            client.end(); 
+        }
+
+        return id;
+
+    }
+    async getansattmessages() {
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            await client.connect();
+            const output = await client.query('SELECT * from "public"."messenger" where motaker=0');
+
+
+
+            return output.rows;
+
+        } catch (error) {
+            console.error(error);
+            return null;
+
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+
+
+    }
 }
 
 //connectionString = process.env["DB_CONNECTIONSTRING_" + process.env.ENVIORMENT.toUpperCase()];

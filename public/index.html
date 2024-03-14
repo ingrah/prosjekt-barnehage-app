@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My app</title>
-    <link rel="manifest" href="manifest.json" >
+    <link rel="manifest" href="manifest.json">
 
 </head>
 
@@ -37,6 +37,9 @@
         const home = document.getElementById("home");
         const message = document.getElementById("message");
         const type = document.getElementById("type");
+        const edit = document.getElementById("edit");
+        const ansattmessage = document.getElementById("ansattmessage");
+        const ansattsvar = document.getElementById("ansattsvar");
 
         let token = sessionStorage.getItem("token");
         console.log(token)
@@ -51,7 +54,7 @@
 
 
         // Clones a larger template and adds it to a existing element.
-        async function displayView(viewTemplate, targetElement) {
+        async function displayView(viewTemplate, targetElement, payload) {
             targetElement.innerHTML = "";
             const element = document.createElement("div");
             element.append(cloneTemplate(viewTemplate));
@@ -79,192 +82,366 @@
                 Showmessaging.onclick = () => {
                     displayView(message, document.querySelector("main"));
                 }
-            }
-            if (viewTemplate.id === "message") {
-                const Hovedside = document.getElementById("Hovedside")
-                Hovedside.onclick = function () {
-                    displayView(home, document.querySelector("main"));
-                }
-                const skrivButton = document.getElementById("skrivButton");
-                skrivButton.onclick = () => {
-                    displayView(type, document.querySelector("main"));
 
-                }
-                await dinemeldinger();
-            }
-            if (viewTemplate.id === "type") {
-                const beskjed = document.getElementById("beskjed");
-                const send = document.getElementById("send");
-                send.onclick = async () => {
-                    let userid = sessionStorage.getItem("token").split(".")[0];
-                    let msg = beskjed.value;
-                    let data = {
-                        userid,
-                        msg,
-                        motaker: 0
+                if (sessionStorage.getItem("token").split(".")[2] === "ansatt") {
+
+                    let ansatt = document.createElement("button");
+                    ansatt.innerHTML = "ansatt";
+                    targetElement.prepend(ansatt);
+                    ansatt.onclick = () => {
+                        displayView(ansattmessage, document.querySelector("main"));
+
                     }
-                    let res = await postTo("/user/addMessage", data);
+                }}
 
-                    if (res.status === 200) {
-                        displayView(message, document.querySelector("main"))
+                if (viewTemplate.id === "ansattmessage") {
+                    const ansatthovedside = document.getElementById("ansatthovedside")
+                    ansatthovedside.onclick = function () {
+                        displayView(home, document.querySelector("main"));
                     }
+                    const ansattskrivButton = document.getElementById("ansattskrivButton");
+                    ansattskrivButton.onclick = () => {
+                        //displayView(type, document.querySelector("main"));
 
+                    }
+                    await ansattmeldinger();
                 }
-            }
-        }
-        // Makes a clone of a template. 
-        function cloneTemplate(template) {
-            return template.content.cloneNode(true);
-        }
 
-        function newUser() {
-            displayView(createUser, document.querySelector("main"));
+                if (viewTemplate.id === "message") {
+                    const Hovedside = document.getElementById("Hovedside")
+                    Hovedside.onclick = function () {
+                        displayView(home, document.querySelector("main"));
+                    }
+                    const skrivButton = document.getElementById("skrivButton");
+                    skrivButton.onclick = () => {
+                        displayView(type, document.querySelector("main"));
 
-        }
+                    }
+                    await dinemeldinger();
+                }
+                if (viewTemplate.id === "type") {
+                    const beskjed = document.getElementById("beskjed");
+                    const send = document.getElementById("send");
+                    send.onclick = async () => {
+                        let userid = sessionStorage.getItem("token").split(".")[0];
+                        let msg = beskjed.value;
+                        let data = {
+                            userid,
+                            msg,
+                            motaker: 0
+                        }
+                        let res = await postTo("/user/addMessage", data);
 
-        async function dinemeldinger() {
-            let userid = sessionStorage.getItem("token").split(".")[0];
-            let res = await fetch("/user/getMessages/" + userid, {
-                method: "get",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-            if (res.status === 200) {
-                let meldinger = await res.json();
-                meldinger.reverse()
-                console.log(meldinger)
-                for (let melding of meldinger) {
-                    let div = document.createElement("div");
-                    div.classList.add("melding");
+                        if (res.status === 200) {
+                            displayView(message, document.querySelector("main"))
+                        }
 
-                    let dato = document.createElement("div");
-                    dato.classList.add("dato")
-                    let dag = new Date(melding.date);
-                    dato.innerHTML = dag.toLocaleDateString();
+                    }
+                }
+                if (viewTemplate.id === "edit") {
+                    const beskjed = document.getElementById("nybeskjed");
+                    const send = document.getElementById("sendny");
+                    beskjed.innerHTML = payload.msg;
+                    send.onclick = async () => {
 
+                        let msg = beskjed.value;
+                        let data = {
+                            msg,
+                            id: payload.id,
 
+                        }
 
-                    let text = document.createElement("div");
-                    text.innerHTML = melding.text;
-
-                    let slett = document.createElement("button");
-                    slett.innerHTML = "slett";
-
-                    div.appendChild(dato);
-                    div.appendChild(text);
-                    div.appendChild(slett);
-                    document.getElementById("innboks").appendChild(div);
-                    let id = melding.id;
-                    slett.onclick = async function () {
-
-                        const data = { id };
 
                         const header = {
-                            method: "delete",
+                            method: "put",
                             headers: {
                                 "Content-Type": "application/json",
                             },
+                            body: JSON.stringify(data),
 
                         };
 
-                        let res = await fetch("/deleteMessage/" + id, header);
+                        let res = await fetch("/updateMessage", header);
                         if (res.status === 200) {
                             displayView(message, document.querySelector("main"));
                         }
+
                     }
+                }
+                if (viewTemplate.id === "ansattsvar") {
+                    const vismelding = document.getElementById("vismelding");
+                    const tilbakemelding = document.getElementById("tilbakemelding");
+                    const sendsvar = document.getElementById("sendsvar");
+                    let melding=payload;
+                    vismelding.innerHTML=melding.text;
+                    let original=melding.text;
+                    sendsvar.onclick = async () => {
+                        let userid=0;
+                        
+                        let text=tilbakemelding.value;
+                        let nyttsvar=original+"###"+text;
+                        
+                        let motaker=melding.userid;
+                        let data = {
+                            userid,
+                            msg:nyttsvar,
+                            motaker,
+                        }
+                        
+                        let res = await postTo("/user/addMessage", data);
+
+                        if (res.status === 200) {
+                            displayView(ansattmessage, document.querySelector("main"))
+                        }
+                        /* let userid = sessionStorage.getItem("token").split(".")[0];
+                        let msg = beskjed.value;
+                        let data = {
+                            userid,
+                            msg,
+                            motaker: 0
+                        }
+                        let res = await postTo("/user/addMessage", data);
+
+                        if (res.status === 200) {
+                            displayView(message, document.querySelector("main"))
+                        } */
+
+                    }
+                }
+
+            }
+            // Makes a clone of a template. 
+            function cloneTemplate(template) {
+                return template.content.cloneNode(true);
+            }
+
+            function newUser() {
+                displayView(createUser, document.querySelector("main"));
+
+            }
+
+            async function dinemeldinger() {
+                let userid = sessionStorage.getItem("token").split(".")[0];
+                let res = await fetch("/user/getMessages/" + userid, {
+                    method: "get",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                if (res.status === 200) {
+                    let meldinger = await res.json();
+                    meldinger.reverse()
+                    console.log(meldinger)
+
+                    let innboks = document.getElementById("innboks");
+                    innboks.innerHTML = "";
+
+                    for (let melding of meldinger) {
+                        let div = document.createElement("div");
+                        div.classList.add("melding");
+
+                        let dato = document.createElement("div");
+                        dato.classList.add("dato")
+                        let dag = new Date(melding.date);
+                        dato.innerHTML = dag.toLocaleDateString();
 
 
+
+                        let text = document.createElement("div");
+                        let meldingArr= melding.text.split("###");
+                        if(meldingArr.length===1){
+                            text.innerHTML = melding.text;
+                        } else{
+                            text.innerHTML=`<p><em>${meldingArr[0]}</em></p><p>${meldingArr[1]}</p>` 
+
+                        }
+                       // let msg = melding.text;
+
+                        let slett = document.createElement("button");
+                        slett.innerHTML = "slett";
+
+
+                        let redigering = document.createElement("button");
+                        redigering.innerHTML = "redigering";
+
+
+                        div.appendChild(dato);
+                        div.appendChild(text);
+                        div.appendChild(slett);
+                        div.appendChild(redigering);
+
+                        innboks.appendChild(div);
+                        let id = melding.id;
+                        slett.onclick = async function () {
+
+                            const data = { id };
+
+                            const header = {
+                                method: "delete",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+
+                            };
+
+                            let res = await fetch("/deleteMessage/" + id, header);
+                            if (res.status === 200) {
+                                displayView(message, document.querySelector("main"));
+                            }
+                        }
+                        redigering.onclick = async function () {
+                            displayView(edit, document.querySelector("main"), { id, msg });
+
+
+
+                        }
+
+
+
+                    }
+                }
+
+            }
+            async function ansattmeldinger() {
+                
+                let res = await fetch("/getansattmeldinger/" , {
+                    method: "get",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                if (res.status === 200) {
+                    let meldinger = await res.json();
+                    meldinger.reverse()
+                    
+
+                    let ansattinnboks = document.getElementById("ansattinnboks");
+                    ansattinnboks.innerHTML = "";
+                  console.log(meldinger)
+                    for (let melding of meldinger) {
+                        let div = document.createElement("div");
+                        div.classList.add("melding");
+
+                        let dato = document.createElement("div");
+                        dato.classList.add("dato")
+                        let dag = new Date(melding.date);
+                        dato.innerHTML = dag.toLocaleDateString();
+
+
+
+                        let text = document.createElement("div");
+                        text.innerHTML = melding.text;
+                        let msg = melding.text;
+
+                        let svar = document.createElement("button");
+                        svar.innerHTML = "svar";
+                        svar.onclick=()=>{
+                            displayView(ansattsvar, document.querySelector("main"),melding);
+
+                        }
+
+                       
+
+
+                        div.appendChild(dato);
+                        div.appendChild(text);
+                        div.appendChild(svar);
+                        
+
+                        ansattinnboks.appendChild(div);
+                        let id = melding.id;
+                        
+
+                    }
+                }
+
+            }
+
+
+
+            async function addUser(e) {
+
+                const name = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                const user = { name, email, password };
+                const respon = await postTo("/user", user);
+                if (respon.status === 200) {
+                    const msg = document.getElementById("msg");
+
+                    msg.innerHTML = "bruker opprettet";
+                    document.getElementById("name").value = "";
+                    document.getElementById("email").value = "";
+                    document.getElementById("password").value = "";
+                    displayView(login, document.querySelector("main"))
 
                 }
-            }
-
-        }
-
-
-        async function addUser(e) {
-
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const user = { name, email, password };
-            const respon = await postTo("/user", user);
-            if (respon.status === 200) {
-                const msg = document.getElementById("msg");
-
-                msg.innerHTML = "bruker opprettet";
-                document.getElementById("name").value = "";
-                document.getElementById("email").value = "";
-                document.getElementById("password").value = "";
-                displayView(login, document.querySelector("main"))
 
             }
 
-        }
+            async function postTo(url, data) {
+                console.log(data)
+                const header = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                };
 
-        async function postTo(url, data) {
-            console.log(data)
-            const header = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            };
+                const respon = await fetch(url, header);
 
-            const respon = await fetch(url, header);
-
-            return respon;
-        }
-        async function loginhome() {
-
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-
-            // Implement your authentication logic here (e.g., send a request to the backend)
-
-            const url = "/login";
-
-            let logindata = await fetch(url, {
-                method: "post",
-                headers: {
-                    authorization: createBasicAuthString(username, password), "Content-Type": "application/json",
-                },
-            });
-            console.log(logindata);
-            if (logindata.status === 200) {
-                /*let logininfo = await logindata.json();
-                console.log(logininfo);
-                sessionStorage.setItem("token", logininfo.logindata.token);
-                msg.innerHTML = "Logged in";*/
-                let data = await logindata.json();
-                console.log(data.token);
-                sessionStorage.setItem("token", data.token);
-                console.log("sukksess");
-                displayView(home, document.querySelector("main"));
+                return respon;
             }
-            else {
-                console.log("feilpassord");
+            async function loginhome() {
+
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+
+                // Implement your authentication logic here (e.g., send a request to the backend)
+
+                const url = "/login";
+
+                let logindata = await fetch(url, {
+                    method: "post",
+                    headers: {
+                        authorization: createBasicAuthString(username, password), "Content-Type": "application/json",
+                    },
+                });
+                console.log(logindata);
+                if (logindata.status === 200) {
+                    /*let logininfo = await logindata.json();
+                    console.log(logininfo);
+                    sessionStorage.setItem("token", logininfo.logindata.token);
+                    msg.innerHTML = "Logged in";*/
+                    let data = await logindata.json();
+                    console.log(data.token);
+                    sessionStorage.setItem("token", data.token);
+                    console.log("sukksess");
+                    displayView(home, document.querySelector("main"));
+                }
+                else {
+                    console.log("feilpassord");
+                }
+
+                // For simplicity, let's assume login is successful
+                // isLoggedIn = true;
+
+
+            }
+            function createBasicAuthString(username, password) {
+                let combinedStr = username + ":" + password;
+                let b64Str = btoa(combinedStr);
+                return "basic " + b64Str; //return the basic authentication string
+
             }
 
-            // For simplicity, let's assume login is successful
-            // isLoggedIn = true;
-
-
-        }
-        function createBasicAuthString(username, password) {
-            let combinedStr = username + ":" + password;
-            let b64Str = btoa(combinedStr);
-            return "basic " + b64Str; //return the basic authentication string
-
-        }
-
-        function toggleTimetable() {
-            const timetable = document.getElementById('timetable');
-            timetable.style.display = timetable.style.display === 'none' ? 'block' : 'none';
-        }
+            function toggleTimetable() {
+                const timetable = document.getElementById('timetable');
+                timetable.style.display = timetable.style.display === 'none' ? 'block' : 'none';
+            } 
 
 
     </script>

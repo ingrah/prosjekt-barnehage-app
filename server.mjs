@@ -16,7 +16,7 @@ server.set('port', port);
 const logger = new SuperLogger();
 server.use(logger.createAutoHTTPRequestLogger()); // Will logg all http method requests
 
-
+server.use(express.json()); 
 // Defining a folder that will contain static files.
 server.use(express.static('public'));
 
@@ -61,6 +61,27 @@ server.delete("/deleteMessage/:id",async(req,res)=>{
         res.status(500).end();
     }
 })
+server.put("/updateMessage",async(req,res)=>{
+const {msg,id}=req.body;
+let respons=await DBManager.updatemessage(id,msg);
+if (respons){
+    res.status(200).end();
+}
+else{
+    res.status(500).end();  
+}
+})
+
+server.get("/getansattmeldinger", async(req, res, next) => {
+    let messages = await DBManager.getansattmessages();
+    console.log(messages)
+    if (messages) {
+        res.status(200).json(messages).end();
+    }
+    else {
+        res.status(500).end();
+    }
+});
 
 // Start the server 
 server.listen(server.get('port'), function () {

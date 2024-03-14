@@ -1,60 +1,59 @@
-
- <template id="createUser">
+<template id="createUser">
     <div>
         Name : <input type="text" id="name"><br>
         Email: <input type="email" id="email"><br />
         Password: <input type="password" id="password"><br />
         <button id="createUserButton">Create User</button>
         <div id="msg">
-            
+
         </div>
     </div>
 
-</template> 
+</template>
 <template id="login">
     <h2>Login</h2>
     <form id="login-form">
         <label for="username">Username:</label>
         <input type="text" id="username" required>
-        
+
         <label for="password">Password:</label>
         <input type="password" id="password" required>
         <button id="loginbutton">Login</button>
     </form>
     <button id="showCreateUser">Create User</button>
 
-    
+
 </template>
 <template id="home">
-    
-        <!-- Personal home button -->
-        <button>Home</button>
 
-        <!-- Messaging button -->
-        <button id="Showmessaging">meldinger</button>
+    <!-- Personal home button -->
+    <button>Home</button>
 
-        <!-- Report Absence button with date picker -->
-        <button>Meld Fravær</button>
-        <input type="text" id="absenceDate" placeholder="Select Date" readonly>
+    <!-- Messaging button -->
+    <button id="Showmessaging">meldinger</button>
 
-        <!-- Timetable section -->
-        <h2>Timetable</h2>
-        <div id="timetable" style="display: none;">
-            <!-- Add your timetable content here -->
-            <p>Monday: 7:00 AM - 5:00 PM</p>
-            <p>Tuesday: 7:00 AM - 5:00 PM</p>
-            <p>Wednesday: 7:00 AM - 5:00 PM</p>
-            <p>Thursday: 7:00 AM - 5:00 PM</p>
-            <p>Friday: 7:00 AM - 5:00 PM</p>
-            <!-- Add more days and times as needed -->
-        </div>
-        <button id="Timeplan">Show/Hide Timetable</button>
-      
+    <!-- Report Absence button with date picker -->
+    <button>Meld Fravær</button>
+    <input type="text" id="absenceDate" placeholder="Select Date" readonly>
+
+    <!-- Timetable section -->
+    <h2>Timetable</h2>
+    <div id="timetable" style="display: none;">
+        <!-- Add your timetable content here -->
+        <p>Monday: 7:00 AM - 5:00 PM</p>
+        <p>Tuesday: 7:00 AM - 5:00 PM</p>
+        <p>Wednesday: 7:00 AM - 5:00 PM</p>
+        <p>Thursday: 7:00 AM - 5:00 PM</p>
+        <p>Friday: 7:00 AM - 5:00 PM</p>
+        <!-- Add more days and times as needed -->
+    </div>
+    <button id="Timeplan">Show/Hide Timetable</button>
+
 </template>
 
 
 
-<template id="message">  
+<template id="message">
     <button id="Hovedside">
         home
     </button>
@@ -62,19 +61,51 @@
 
     <div>
         Ingrid
- </div>
+    </div>
 
- <button id="skrivButton">skriv ny melling</button>
- <div id="innboks">
+    <button id="skrivButton">skriv ny melling</button>
+    <div id="innboks">
 
- </div>
+    </div>
 
 
 </template>
-<template id ="type">
+<template id="type">
     <h2>ny melding</h2>
     <textarea id="beskjed"></textarea>
     <button id="send">Send</button>
 
 </template>
+<template id="edit">
+    <h2>redigeremelding</h2>
+    <textarea id="nybeskjed"></textarea>
+    <button id="sendny">Send</button>
 
+</template>
+<template id="ansattmessage">
+    <button id="ansatthovedside">
+        home
+    </button>
+    <h2>meldinger</h2>
+
+    <div>
+        Barnehage
+    </div>
+
+    <button id="ansattskrivButton">skriv ny melling</button>
+    <div id="ansattinnboks">
+
+    </div>
+
+
+
+</template>
+<template id="ansattsvar">
+    <h2>Svar</h2>
+    <div id="vismelding">
+        
+    </div>
+    <textarea id="tilbakemelding"></textarea>
+    <button id="sendsvar">Send</button>
+
+</template>

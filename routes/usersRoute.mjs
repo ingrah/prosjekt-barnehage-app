@@ -71,6 +71,8 @@ USER_API.delete('/:id', (req, res) => {
 });
 USER_API.post("/addMessage", async (req, res, next) => {
     const { userid, msg, motaker } = req.body;
+    console.log("motaker")
+    console.log(motaker)
 
     let id = DBManager.addmessage(userid, msg, motaker);
     if (id) {
