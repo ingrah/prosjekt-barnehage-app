@@ -204,7 +204,7 @@ class DBManager {
 
         try {
             await client.connect();
-            const output = await client.query('SELECT * from "public"."messenger" where motaker=0');
+            const output = await client.query('SELECT * from "public"."messenger" where motaker=0 or userid=0');
 
 
 

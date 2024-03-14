@@ -330,8 +330,14 @@
 
 
                         let text = document.createElement("div");
-                        text.innerHTML = melding.text;
-                        let msg = melding.text;
+                        let meldingArr= melding.text.split("###");
+                        if(meldingArr.length===1){
+                            text.innerHTML = melding.text;
+                        } else{
+                            text.innerHTML=`<p><em>${meldingArr[0]}</em></p><p>${meldingArr[1]}</p>` 
+
+                        }
+                       // let msg = melding.text;
 
                         let svar = document.createElement("button");
                         svar.innerHTML = "svar";
