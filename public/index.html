@@ -42,7 +42,7 @@
         const ansattsvar = document.getElementById("ansattsvar");
 
         let token = sessionStorage.getItem("token");
-        console.log(token)
+        
         if (token) {
             displayView(home, document.querySelector("main"));
         } else {
@@ -231,7 +231,7 @@
                 if (res.status === 200) {
                     let meldinger = await res.json();
                     meldinger.reverse()
-                    console.log(meldinger)
+                    
 
                     let innboks = document.getElementById("innboks");
                     innboks.innerHTML = "";
@@ -317,7 +317,8 @@
 
                     let ansattinnboks = document.getElementById("ansattinnboks");
                     ansattinnboks.innerHTML = "";
-                  console.log(meldinger)
+                  
+
                     for (let melding of meldinger) {
                         let div = document.createElement("div");
                         div.classList.add("melding");
@@ -386,7 +387,7 @@
             }
 
             async function postTo(url, data) {
-                console.log(data)
+                
                 const header = {
                     method: "POST",
                     headers: {
@@ -416,20 +417,17 @@
                         authorization: createBasicAuthString(username, password), "Content-Type": "application/json",
                     },
                 });
-                console.log(logindata);
+                
                 if (logindata.status === 200) {
-                    /*let logininfo = await logindata.json();
-                    console.log(logininfo);
-                    sessionStorage.setItem("token", logininfo.logindata.token);
-                    msg.innerHTML = "Logged in";*/
+                    
                     let data = await logindata.json();
-                    console.log(data.token);
+                    
                     sessionStorage.setItem("token", data.token);
-                    console.log("sukksess");
+                    
                     displayView(home, document.querySelector("main"));
                 }
                 else {
-                    console.log("feilpassord");
+                    alert("feilpassord");
                 }
 
                 // For simplicity, let's assume login is successful

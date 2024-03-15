@@ -36,8 +36,8 @@ const credential = req.headers.authorization.split(" ")[1];
 const [username,password]= Buffer.from(credential, "base64").toString("utf8").split(":");
 const user= await DBManager.getUser(username);
 if (user[0].password===password){
-    console.log("sukkses");
-    console.log(user);
+    
+    
    let role=user[0].role ? user[0].role : "ingen";
     
     let token=user[0].id+"."+Date.now()+"."+role;
@@ -45,7 +45,7 @@ if (user[0].password===password){
 }
 else 
 {
-    console.log("feilpassor");
+    
     res.status(401).end();
 }
 });
@@ -74,7 +74,7 @@ else{
 
 server.get("/getansattmeldinger", async(req, res, next) => {
     let messages = await DBManager.getansattmessages();
-    console.log(messages)
+    
     if (messages) {
         res.status(200).json(messages).end();
     }

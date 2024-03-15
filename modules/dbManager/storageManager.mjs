@@ -9,7 +9,7 @@ let connectionString = process.env.DB_CONNECTIONSTRING_LOCAL;
 if (process.env.ENVIORMENT != "local") {
     connectionString = process.env.DB_CONNECTIONSTRING_PROD;
 }
-console.log(connectionString);
+
 /// TODO: is the structure / design of the DBManager as good as it could be?
 
 class DBManager {
@@ -72,13 +72,11 @@ class DBManager {
     async createUser(user) {
 
         const client = new pg.Client(this.#credentials);
-        console.log(user)
+        
         try {
             await client.connect();
             const output = await client.query('INSERT INTO "public"."Users"("id","name", "email", "password") VALUES(DEFAULT,$1::Text, $2::Text, $3::Text) RETURNING id;', [user.name, user.email, user.pswHash]);
-            // console.log(output);
-            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
-            // Of special intrest is the rows and rowCount properties of this object.
+            .
 
             if (output.rows.length == 1) {
                 // We stored the user in the DB.
@@ -169,7 +167,7 @@ class DBManager {
         try {
             await client.connect();
             const output = await client.query('Delete from "public"."messenger"  where id = $1;', [id]);
-            console.log(output)
+            
 
 
         } catch (error) {
