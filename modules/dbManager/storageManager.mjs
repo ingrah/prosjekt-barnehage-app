@@ -76,7 +76,7 @@ class DBManager {
         try {
             await client.connect();
             const output = await client.query('INSERT INTO "public"."Users"("id","name", "email", "password") VALUES(DEFAULT,$1::Text, $2::Text, $3::Text) RETURNING id;', [user.name, user.email, user.pswHash]);
-            .
+            
 
             if (output.rows.length == 1) {
                 // We stored the user in the DB.
