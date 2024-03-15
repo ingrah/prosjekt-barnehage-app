@@ -82,6 +82,12 @@
                 Showmessaging.onclick = () => {
                     displayView(message, document.querySelector("main"));
                 }
+                const Absence = document.getElementById("Absence");
+                const absenceDate = document.getElementById("absenceDate");
+                Absence.onclick=()=>{
+                    let melding="du har meldt fraver" + absenceDate.value + ". (merk:dette er ikke lagret,kun for demo)";
+                    alert(melding);
+                }
 
                 if (sessionStorage.getItem("token").split(".")[2] === "ansatt") {
 
@@ -122,6 +128,10 @@
                 if (viewTemplate.id === "type") {
                     const beskjed = document.getElementById("beskjed");
                     const send = document.getElementById("send");
+                    const avbryttype = document.getElementById("avbryttype");
+                    avbryttype.onclick=()=>{
+                        displayView(message, document.querySelector("main")); 
+                    }
                     send.onclick = async () => {
                         let userid = sessionStorage.getItem("token").split(".")[0];
                         let msg = beskjed.value;
@@ -142,6 +152,10 @@
                     const beskjed = document.getElementById("nybeskjed");
                     const send = document.getElementById("sendny");
                     beskjed.innerHTML = payload.msg;
+                    const avbrytedit = document.getElementById("avbrytedit");
+                    avbrytedit.onclick=()=>{
+                        displayView(message, document.querySelector("main")); 
+                    }
                     send.onclick = async () => {
 
                         let msg = beskjed.value;
@@ -175,6 +189,10 @@
                     let melding=payload;
                     vismelding.innerHTML=melding.text;
                     let original=melding.text;
+                    const avbrytsvar = document.getElementById("avbrytsvar");
+                    avbrytsvar.onclick=()=>{
+                        displayView(ansattmessage, document.querySelector("main")); 
+                    }
                     sendsvar.onclick = async () => {
                         let userid=0;
                         
@@ -457,7 +475,10 @@
             padding: 0;
             background-color: #e62478;
         }
-
+          main{
+            width: 80vw;
+            margin: auto;
+          }
         #login-container,
         #location-container {
             max-width: 400px;

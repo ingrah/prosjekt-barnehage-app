@@ -33,8 +33,8 @@
     <button id="Showmessaging">meldinger</button>
 
     <!-- Report Absence button with date picker -->
-    <button>Meld Fravær</button>
-    <input type="text" id="absenceDate" placeholder="Select Date" readonly>
+    <button id="Absence">Meld Fravær</button>
+    <input type="date" id="absenceDate" placeholder="Select Date" >
 
     <!-- Timetable section -->
     <h2>Timetable</h2>
@@ -74,12 +74,14 @@
     <h2>ny melding</h2>
     <textarea id="beskjed"></textarea>
     <button id="send">Send</button>
+    <button id="avbryttype">avbryt</button>
 
 </template>
 <template id="edit">
     <h2>redigeremelding</h2>
     <textarea id="nybeskjed"></textarea>
     <button id="sendny">Send</button>
+    <button id="avbrytedit">avbryt</button>
 
 </template>
 <template id="ansattmessage">
@@ -107,5 +109,6 @@
     </div>
     <textarea id="tilbakemelding"></textarea>
     <button id="sendsvar">Send</button>
+    <button id="avbrytsvar">avbryt</button>
 
 </template>
